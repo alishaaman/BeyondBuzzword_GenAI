@@ -1,0 +1,26 @@
+#!/bin/bash
+
+course_code="ABC123"
+course_name="CourseName"
+assignment_name="Assignment1"
+source_folder="essays"
+output_folder="organized_essays"
+rubric_template="rubric_template.docx"
+
+mkdir -p "$output_folder"
+
+for file in "$source_folder"/*_Essay.docx; do
+    filename=$(basename "$file")
+    IFS='_' read -r surname student_id rest <<< "$filename"
+
+    student_folder="$output_folder/${student_id}_${course_name}"
+    mkdir -p "$student_folder"
+
+    new_essay_name="${course_code}_${student_id}_${assignment_name}.docx"
+    new_rubric_name="${course_code}_${student_id}_Rubric.docx"
+
+    cp "$file" "$student_folder/$new_essay_name"
+    cp "$source_folder/$rubric_template" "$student_folder/$new_rubric_name"
+done
+
+echo "✅ All files have been renamed and organised."
