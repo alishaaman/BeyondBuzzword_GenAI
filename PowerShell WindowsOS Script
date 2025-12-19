@@ -1,0 +1,25 @@
+# PowerShell Script: organize_essays.ps1
+
+$courseCode = "ABC123"
+$courseName = "CourseName"
+$assignmentName = "Assignment1"
+$sourceFolder = "essays"
+$outputFolder = "organized_essays"
+$rubricTemplate = "rubric_template.docx"
+
+New-Item -ItemType Directory -Force -Path $outputFolder
+
+Get-ChildItem -Path $sourceFolder -Filter "*_Essay.docx" | ForEach-Object {
+    $parts = $_.BaseName -split "_"
+    $studentID = $parts[1]
+    $studentFolder = "$outputFolder\$studentID" + "_$courseName"
+    New-Item -ItemType Directory -Force -Path $studentFolder
+
+    $newEssayName = "$courseCode" + "_$studentID" + "_$assignmentName.docx"
+    $newRubricName = "$courseCode" + "_$studentID" + "_Rubric.docx"
+
+    Copy-Item $_.FullName -Destination "$studentFolder\$newEssayName"
+    Copy-Item "$sourceFolder\$rubricTemplate" -Destination "$studentFolder\$newRubricName"
+}
+
+Write-Host "✅ All files have been renamed and organised."
